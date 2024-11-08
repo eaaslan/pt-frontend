@@ -134,9 +134,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!response.ok) {
           throw new Error(data.error || "Login failed");
         }
-
+        let userData;
         if (response.ok) {
-          const userData = {
+          userData = {
             id: data.user.id,
             username: usernameInput.value,
             password: passwordInput.value, // Only store if rememberMe is checked
