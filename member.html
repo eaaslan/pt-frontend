@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Member Dashboard</title>
+    <link rel="stylesheet" href="/CSS/member.css" />
+    <!-- Move the script to end of body and remove defer -->
+    <!-- <script src="https://unpkg.com/html5-qrcode" defer></script>   -->
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1 class="welcome-text">
+          Welcome, <span id="memberName">Member</span>
+        </h1>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+      </header>
+
+      <main class="main-content">
+        <div class="qr-section">
+          <h2>Check-in with QR Code</h2>
+          <button id="checkInBtn" class="checkIn-btn">Check in</button>
+          <!-- Remove inline styles -->
+          <div id="reader"></div>
+          <div id="scanResult" class="scan-result"></div>
+        </div>
+      </main>
+
+      <div id="notification" class="notification"></div>
+    </div>
+
+    <!-- Add scripts at the end of body -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="/scripts/member.js"></script>
+    <script src="/scripts/config.js"></script>
+  </body>
+</html>
