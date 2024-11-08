@@ -1,0 +1,13 @@
+{
+  "name": "attendance-tracking-frontend",
+  "version": "1.0.0",
+  "description": "Attendance Tracking Frontend",
+  "private": true,
+  "scripts": {
+    "dev": "serve",
+    "build": "echo 'No build step required'"
+  },
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}
