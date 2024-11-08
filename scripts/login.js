@@ -114,7 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (isValid) {
-      // Show loading state
       submitButton.disabled = true;
       submitButton.classList.add("loading");
 
@@ -135,41 +134,43 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!response.ok) {
           throw new Error(data.error || "Login failed");
         }
-        let userData;
-        if (data.ok) {
-          userData = {
-            id: data.user.id, // Make sure to store the id
-            username: data.user.username,
-            role: data.user.role,
 
-            // other user data you want to store
-          };
+        // Store the complete user data
+        const userData = {
+          id: data.user.id,
+          username: data.user.username,
+          role: data.user.role,
+          name: data.user.name,
+          email: data.user.email,
+        };
 
-          localStorage.setItem("user", JSON.stringify(userData));
-        }
+        // Always store the user data on successful login
+        localStorage.setItem("user", JSON.stringify(userData));
 
+        // Handle remember me separately
         if (rememberMe.checked) {
-          saveFormData();
+          const formData = {
+            username: usernameInput.value,
+            password: passwordInput.value,
+            remember: true,
+          };
+          localStorage.setItem("loginData", JSON.stringify(formData)); // Store login data separately
         } else {
-          localStorage.removeItem("user");
+          localStorage.removeItem("loginData");
         }
 
-        console.log(data.user.role);
+        console.log("Stored user data:", userData); // Debug log
 
-        if (data.user.role == "ROLE_ADMIN") {
+        if (data.user.role === "ROLE_ADMIN") {
           console.log("admin");
-        } else if (data.user.role == "ROLE_MEMBER") {
+        } else if (data.user.role === "ROLE_MEMBER") {
           window.location.href = "member.html";
           console.log("member");
         }
-
-        // Here you would typically make an actual API call
-        // and handle the response accordingly
       } catch (error) {
         console.error("Login failed:", error);
         showError(submitError, "Login failed. Please try again.");
       } finally {
-        // Reset loading state
         submitButton.disabled = false;
         submitButton.classList.remove("loading");
       }
