@@ -1,30 +1,24 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Declare all variables at the top
   let html5QrCode = null;
-  let isScanning = false; // This was missing before
+  let isScanning = false;
 
-  // 2. Get all DOM elements
+  // Get DOM elements
   const reader = document.getElementById("reader");
   const scanResult = document.getElementById("scanResult");
   const notification = document.getElementById("notification");
   const memberNameElement = document.getElementById("memberName");
   const logoutBtn = document.getElementById("logoutBtn");
   const checkInBtn = document.getElementById("checkInBtn");
-  const API_URL = window.CONFIG.getApiUrl();
-  // 3. Configuration constants
 
-  const qrConfig = {
-    fps: 10,
-    qrbox: { width: 250, height: 250 },
-    aspectRatio: 1.0,
-  };
+  // Configuration
+  const LOCAL_IP = "192.168.1.13";
+  const API_URL = `http://${LOCAL_IP}:8080`;
 
-  // 4. Define utility functions
+  // Utility functions
   function showNotification(message, type) {
     notification.textContent = message;
     notification.className = `notification ${type}`;
     notification.style.display = "block";
-
     setTimeout(() => {
       notification.style.display = "none";
     }, 3000);
@@ -35,9 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return userData?.id || null;
   }
 
+  // Handle successful QR scan
   async function onScanSuccess(qrCodeMessage) {
     try {
-      // Stop scanning after successful scan
       if (html5QrCode) {
         await html5QrCode.stop();
         html5QrCode = null;
@@ -52,13 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const response = await fetch(`${API_URL}/api/qr/check-in/${memberId}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({
-          qrCode: qrCodeMessage,
-        }),
+        body: JSON.stringify({ qrCode: qrCodeMessage }),
       });
 
       const data = await response.json();
@@ -77,62 +67,65 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function onScanFailure(error) {
-    if (!error.includes("QR code parse error")) {
-      console.error("Scan error:", error);
-      showNotification(error, "error");
-    }
-  }
-
-  // 5. Initialize user data
-  const userData = JSON.parse(localStorage.getItem("user"));
-  if (userData && userData.username) {
-    memberNameElement.textContent = userData.username;
-  }
-
-  checkInBtn.addEventListener("click", async () => {
+  // Improved camera initialization function
+  async function initializeCamera() {
     try {
-      if (!isScanning) {
+      if (!html5QrCode) {
         html5QrCode = new Html5Qrcode("reader");
-        const devices = await Html5Qrcode.getCameras();
+      }
 
-        // Simple direct camera access
-        await html5QrCode
-          .start(
-            devices[0].id,
-            { facingMode: { exact: "environment" } }, // Try exact environment first
-            {
-              fps: 10,
-              qrbox: 250,
-            },
-            (decodedText) => {
-              console.log("QR Code detected:", decodedText);
-              onScanSuccess(decodedText);
-            },
-            (error) => console.log("QR Scan error:", error)
-          )
-          .catch(async (err) => {
-            console.log("Falling back to user camera");
-            // If environment camera fails, try user camera
-            await html5QrCode.start(
-              { facingMode: "user" },
-              {
-                fps: 10,
-                qrbox: 250,
-              },
-              (decodedText) => {
-                console.log("QR Code detected:", decodedText);
-                onScanSuccess(decodedText);
-              },
-              (error) => console.log("QR Scan error:", error)
-            );
-          });
+      const devices = await Html5Qrcode.getCameras();
+
+      if (devices && devices.length > 0) {
+        // First try to get the back camera
+        const backCamera = devices.find(
+          (device) =>
+            device.label.toLowerCase().includes("back") ||
+            device.label.toLowerCase().includes("rear")
+        );
+
+        const cameraId = backCamera ? backCamera.id : devices[0].id;
+
+        // Configure camera with specific settings for mobile
+        const config = {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0,
+          showTorchButtonIfSupported: true,
+          showZoomSliderIfSupported: true,
+          defaultZoomValueIfSupported: 2,
+        };
+
+        await html5QrCode.start(cameraId, config, onScanSuccess, (error) => {
+          if (!error.includes("QR code parse error")) {
+            console.warn(error);
+          }
+        });
 
         isScanning = true;
         checkInBtn.textContent = "Stop Scanning";
       } else {
-        await html5QrCode.stop();
-        html5QrCode = null;
+        throw new Error("No cameras found");
+      }
+    } catch (err) {
+      console.error("Camera initialization error:", err);
+      showNotification(
+        "Failed to access camera. Please check permissions.",
+        "error"
+      );
+    }
+  }
+
+  // Event Listeners
+  checkInBtn.addEventListener("click", async () => {
+    try {
+      if (!isScanning) {
+        await initializeCamera();
+      } else {
+        if (html5QrCode) {
+          await html5QrCode.stop();
+          html5QrCode = null;
+        }
         isScanning = false;
         checkInBtn.textContent = "Check in";
       }
@@ -157,7 +150,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 7. Clean up on page unload
+  // Initialize user data
+  const userData = JSON.parse(localStorage.getItem("user"));
+  if (userData && userData.username) {
+    memberNameElement.textContent = userData.username;
+  }
+
+  // Cleanup on page unload
   window.addEventListener("beforeunload", async () => {
     if (html5QrCode && isScanning) {
       try {
@@ -167,12 +166,4 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
-
-  // 8. Debug logs
-  console.log("Elements found:", {
-    reader: !!reader,
-    checkInBtn: !!checkInBtn,
-    scanResult: !!scanResult,
-  });
-  console.log("Html5Qrcode available:", typeof Html5Qrcode !== "undefined");
 });
