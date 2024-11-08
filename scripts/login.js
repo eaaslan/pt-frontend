@@ -135,6 +135,18 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!response.ok) {
           throw new Error(data.error || "Login failed");
         }
+        let userData;
+        if (data.ok) {
+          userData = {
+            id: data.user.id, // Make sure to store the id
+            username: data.user.username,
+            role: data.user.role,
+
+            // other user data you want to store
+          };
+        }
+
+        localStorage.setItem("user", JSON.stringify(userData));
 
         if (rememberMe.checked) {
           saveFormData();
