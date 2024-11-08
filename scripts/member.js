@@ -11,8 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const checkInBtn = document.getElementById("checkInBtn");
 
   // Configuration
-  const LOCAL_IP = CONFIG.getApiUrl();
-  const API_URL = `http://${LOCAL_IP}:8080`;
+  const API_URL = window.CONFIG.getApiUrl();
 
   // Utility functions
   function showNotification(message, type) {
@@ -33,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle successful QR scan
   async function onScanSuccess(qrCodeMessage) {
     try {
+      console.log("QR Code scanned:", qrCodeMessage);
       if (html5QrCode) {
         await html5QrCode.stop();
         html5QrCode = null;
@@ -41,18 +41,25 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const memberId = getUserId();
+      console.log("Member ID:", memberId);
       if (!memberId) {
         throw new Error("User ID not found");
       }
 
+      console.log(
+        "Sending request to:",
+        `${API_URL}/api/qr/check-in/${memberId}`
+      );
+
       const response = await fetch(`${API_URL}/api/qr/check-in/${memberId}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Origin: API_URL },
         credentials: "include",
         body: JSON.stringify({ qrCode: qrCodeMessage }),
       });
-
+      console.log("Response status:", response.status);
       const data = await response.json();
+      console.log("Response data:", data);
 
       if (response.ok) {
         showNotification("Check-in successful!", "success");
@@ -62,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(data.error || "Check-in failed");
       }
     } catch (error) {
+      console.error("Check-in error:", error);
       showNotification(error.message, "error");
       scanResult.textContent = error.message;
       scanResult.className = "scan-result error";
