@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function getUserId() {
     const userData = JSON.parse(localStorage.getItem("user"));
+    console.log("Stored user data:", userData); // Debug log
     return userData?.id || null;
   }
 

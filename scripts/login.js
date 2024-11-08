@@ -144,9 +144,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // other user data you want to store
           };
-        }
 
-        localStorage.setItem("user", JSON.stringify(userData));
+          localStorage.setItem("user", JSON.stringify(userData));
+        }
 
         if (rememberMe.checked) {
           saveFormData();
