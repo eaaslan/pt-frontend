@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const checkInBtn = document.getElementById("checkInBtn");
 
   // Configuration
-  const LOCAL_IP = "192.168.1.13";
+  const LOCAL_IP = CONFIG.getApiUrl();
   const API_URL = `http://${LOCAL_IP}:8080`;
 
   // Utility functions
