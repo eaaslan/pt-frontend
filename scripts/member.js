@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const checkInBtn = document.getElementById("checkInBtn");
 
   // Configuration
-  const API_URL = window.CONFIG.getApiUrl();
+  const API_URL = "https://pt-backend-42d98685b856.herokuapp.com";
 
   // Utility functions
   function showNotification(message, type) {
@@ -23,16 +23,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  function getUserId() {
+  function getUserData() {
     const userData = JSON.parse(localStorage.getItem("user"));
-    console.log("Stored user data:", userData); // Debug log
-    return userData?.id || null;
+    if (!userData) {
+      window.location.href = "login.html";
+      return null;
+    }
+    return userData;
+  }
+
+  function getBasicAuthHeader() {
+    const userData = getUserData();
+    if (!userData || !userData.username || !userData.password) {
+      return null;
+    }
+
+    const base64Credentials = btoa(`${userData.username}:${userData.password}`);
+    return `Basic ${base64Credentials}`;
   }
 
   // Handle successful QR scan
   async function onScanSuccess(qrCodeMessage) {
     try {
-      console.log("QR Code scanned:", qrCodeMessage);
       if (html5QrCode) {
         await html5QrCode.stop();
         html5QrCode = null;
@@ -40,26 +52,36 @@ document.addEventListener("DOMContentLoaded", () => {
         checkInBtn.textContent = "Check in";
       }
 
-      const memberId = getUserId();
-      console.log("Member ID:", memberId);
-      if (!memberId) {
-        throw new Error("User ID not found");
+      const userData = getUserData();
+      if (!userData || !userData.id) {
+        throw new Error("Please log in again");
       }
 
-      console.log(
-        "Sending request to:",
-        `${API_URL}/api/qr/check-in/${memberId}`
+      const authHeader = getBasicAuthHeader();
+      if (!authHeader) {
+        throw new Error("Authentication credentials not found");
+      }
+
+      const response = await fetch(
+        `${API_URL}/api/qr/check-in/${userData.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: authHeader,
+          },
+          credentials: "include",
+          body: JSON.stringify({ qrCode: qrCodeMessage }),
+        }
       );
 
-      const response = await fetch(`${API_URL}/api/qr/check-in/${memberId}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Origin: API_URL },
-        credentials: "include",
-        body: JSON.stringify({ qrCode: qrCodeMessage }),
-      });
-      console.log("Response status:", response.status);
+      if (response.status === 401) {
+        localStorage.removeItem("user");
+        window.location.href = "login.html";
+        throw new Error("Session expired. Please log in again");
+      }
+
       const data = await response.json();
-      console.log("Response data:", data);
 
       if (response.ok) {
         showNotification("Check-in successful!", "success");
@@ -69,10 +91,10 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(data.error || "Check-in failed");
       }
     } catch (error) {
-      console.error("Check-in error:", error);
       showNotification(error.message, "error");
       scanResult.textContent = error.message;
       scanResult.className = "scan-result error";
+      console.error("Check-in error:", error);
     }
   }
 
@@ -128,6 +150,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Event Listeners
   checkInBtn.addEventListener("click", async () => {
     try {
+      // Verify user is logged in before starting scanner
+      if (!getUserData()) {
+        return;
+      }
+
       if (!isScanning) {
         await initializeCamera();
       } else {
@@ -160,9 +187,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Initialize user data
-  const userData = JSON.parse(localStorage.getItem("user"));
+  const userData = getUserData();
   if (userData && userData.username) {
     memberNameElement.textContent = userData.username;
+  } else {
+    window.location.href = "login.html";
   }
 
   // Cleanup on page unload

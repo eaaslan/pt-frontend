@@ -135,30 +135,35 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error(data.error || "Login failed");
         }
 
-        // Store the complete user data
-        const userData = {
-          id: data.user.id,
-          username: data.user.username,
-          role: data.user.role,
-          name: data.user.name,
-          email: data.user.email,
-        };
+        if (response.ok) {
+          const userData = {
+            id: data.user.id,
+            username: usernameInput.value,
+            password: passwordInput.value, // Only store if rememberMe is checked
+            name: data.user.name,
+            role: data.user.role,
+          };
+        }
 
         // Always store the user data on successful login
         localStorage.setItem("user", JSON.stringify(userData));
 
-        // Handle remember me separately
         if (rememberMe.checked) {
-          const formData = {
-            username: usernameInput.value,
-            password: passwordInput.value,
-            remember: true,
-          };
-          localStorage.setItem("loginData", JSON.stringify(formData)); // Store login data separately
+          localStorage.setItem("user", JSON.stringify(userData));
         } else {
-          localStorage.removeItem("loginData");
+          // If remember me is not checked, store without password
+          const userDataWithoutPassword = { ...userData };
+          delete userDataWithoutPassword.password;
+          localStorage.setItem("user", JSON.stringify(userDataWithoutPassword));
+          // Store credentials in sessionStorage instead
+          sessionStorage.setItem(
+            "credentials",
+            JSON.stringify({
+              username: usernameInput.value,
+              password: passwordInput.value,
+            })
+          );
         }
-
         console.log("Stored user data:", userData); // Debug log
 
         if (data.user.role === "ROLE_ADMIN") {
