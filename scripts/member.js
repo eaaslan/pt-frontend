@@ -32,7 +32,22 @@ document.addEventListener("DOMContentLoaded", () => {
     return userData;
   };
 
-  const getBasicAuthHeader = (username, password) => {
+  const getBasicAuthHeader = () => {
+    const userData = getUserData();
+    if (!userData) return null;
+
+    // Try to get credentials from various sources
+    let username = userData.username;
+    let password =
+      userData.password ||
+      (sessionStorage.getItem("credentials")
+        ? JSON.parse(sessionStorage.getItem("credentials")).password
+        : null);
+
+    if (!username || !password) {
+      return null;
+    }
+
     return "Basic " + btoa(username + ":" + password);
   };
 
@@ -53,7 +68,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const authHeader = getBasicAuthHeader();
       if (!authHeader) {
-        throw new Error("Authentication credentials not found");
+        localStorage.removeItem("user");
+        sessionStorage.removeItem("credentials");
+        window.location.href = "login.html";
+        throw new Error(
+          "Authentication credentials not found. Please log in again"
+        );
       }
 
       const response = await fetch(
@@ -71,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (response.status === 401) {
         localStorage.removeItem("user");
+        sessionStorage.removeItem("credentials");
         window.location.href = "login.html";
         throw new Error("Session expired. Please log in again");
       }
@@ -142,13 +163,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Event Listeners
-  checkInBtn.addEventListener("click", async () => {
-    {
-    }
+  checkInBtn.addEventListener("click", async (event) => {
+    event.preventDefault();
 
     try {
-      // Verify user is logged in before starting scanner
-      if (!getUserData()) {
+      // Verify user is logged in and has valid credentials
+      const userData = getUserData();
+      if (!userData) return;
+
+      if (!getBasicAuthHeader()) {
+        showNotification(
+          "Please log in again to refresh your credentials",
+          "error"
+        );
+        window.location.href = "login.html";
         return;
       }
 
@@ -179,6 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error stopping scanner:", error);
     } finally {
       localStorage.removeItem("user");
+      sessionStorage.removeItem("credentials");
       window.location.href = "login.html";
     }
   });
