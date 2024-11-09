@@ -23,24 +23,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  function getUserData() {
+  const getUserData = () => {
     const userData = JSON.parse(localStorage.getItem("user"));
     if (!userData) {
       window.location.href = "login.html";
       return null;
     }
     return userData;
-  }
+  };
 
-  function getBasicAuthHeader() {
-    const userData = getUserData();
-    if (!userData || !userData.username || !userData.password) {
-      return null;
-    }
-
-    const base64Credentials = btoa(`${userData.username}:${userData.password}`);
-    return `Basic ${base64Credentials}`;
-  }
+  const getBasicAuthHeader = (username, password) => {
+    return "Basic " + btoa(username + ":" + password);
+  };
 
   // Handle successful QR scan
   async function onScanSuccess(qrCodeMessage) {
@@ -149,6 +143,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Event Listeners
   checkInBtn.addEventListener("click", async () => {
+    {
+    }
+
     try {
       // Verify user is logged in before starting scanner
       if (!getUserData()) {
