@@ -1,5 +1,5 @@
 // printMember.js
-const apiUrl = "http://localhost:8080/members";
+const apiUrl = "http://localhost:8080/api/users";
 const memberList = document.querySelector(".memberList");
 
 if (memberList) {
@@ -14,7 +14,13 @@ if (memberList) {
   });
 
   // Fetch and display members
-  fetch(apiUrl)
+  fetch(apiUrl, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Basic " + btoa("admin:admin123"),
+    },
+  })
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.statusText}`);

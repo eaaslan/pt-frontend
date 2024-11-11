@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const apiUrl = "http://localhost:8080/members";
+  const apiUrl = "http://localhost:8080/api/users";
   const urlParams = new URLSearchParams(window.location.search);
   const memberId = urlParams.get("id");
 
@@ -10,7 +10,13 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  fetch(`${apiUrl}/${memberId}`)
+  fetch(`${apiUrl}/${memberId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Basic " + btoa("admin:admin123"),
+    },
+  })
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.statusText}`);

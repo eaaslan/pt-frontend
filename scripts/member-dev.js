@@ -1,12 +1,23 @@
+import getIstanbulTimeISO from "./localTime.js";
+
 document.addEventListener("DOMContentLoaded", () => {
-  const checkInBtn = document.getElementById("checkInBtn");
+  // Get DOM elements
+  const reader = document.getElementById("reader");
+  const scanResult = document.getElementById("scanResult");
   const notification = document.getElementById("notification");
   const memberNameElement = document.getElementById("memberName");
-  const scanResult = document.getElementById("scanResult");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const checkInBtn = document.getElementById("checkInBtn");
+  const timeInfo = getIstanbulTimeISO();
 
-  const API_URL = "https://pt-backend-42d98685b856.herokuapp.com";
-  const TEST_QR_CODE = "GYM_LOCATION_001";
+  // Configuration
+  //const API_URL = "https://pt-backend-42d98685b856.herokuapp.com";
+  const API_URL = "http://localhost:8080";
 
+  // const API_URL = "http://localhost:8080";
+  const TEST_QR_CODE = "GYM_LOCATION_001"; // Hardcoded test QR code
+
+  // Utility functions
   function showNotification(message, type) {
     notification.textContent = message;
     notification.className = `notification ${type}`;
@@ -16,19 +27,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  function getUserData() {
+  const getUserData = () => {
     const userData = JSON.parse(localStorage.getItem("user"));
     if (!userData) {
       window.location.href = "login.html";
       return null;
     }
     return userData;
-  }
+  };
 
-  function getBasicAuthHeader(username, password) {
+  const getBasicAuthHeader = () => {
+    const userData = getUserData();
+    if (!userData) return null;
+
+    // Try to get credentials from various sources
+    let username = userData.username;
+    let password =
+      userData.password ||
+      (sessionStorage.getItem("credentials")
+        ? JSON.parse(sessionStorage.getItem("credentials")).password
+        : null);
+
+    if (!username || !password) {
+      return null;
+    }
+
     return "Basic " + btoa(username + ":" + password);
-  }
+  };
 
+  // Test check-in function without camera
   async function testCheckIn() {
     try {
       const userData = getUserData();
@@ -36,22 +63,20 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error("Please log in again");
       }
 
-      console.log("Making check-in request for user:", userData.id);
-      console.log("Using test QR code:", TEST_QR_CODE);
-
-      // Get credentials from either localStorage or sessionStorage
-      let username = userData.username;
-      let password =
-        userData.password ||
-        JSON.parse(sessionStorage.getItem("credentials"))?.password;
-
-      if (!username || !password) {
+      const authHeader = getBasicAuthHeader();
+      if (!authHeader) {
+        localStorage.removeItem("user");
+        sessionStorage.removeItem("credentials");
+        window.location.href = "login.html";
         throw new Error(
-          "Authentication credentials not found. Please log in again."
+          "Authentication credentials not found. Please log in again"
         );
       }
 
-      const authHeader = getBasicAuthHeader(username, password);
+      console.log("Making check-in request for user:", userData.id);
+      console.log("Using test QR code:", TEST_QR_CODE);
+
+      console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
       const response = await fetch(
         `${API_URL}/api/qr/check-in/${userData.id}`,
@@ -62,7 +87,11 @@ document.addEventListener("DOMContentLoaded", () => {
             Authorization: authHeader,
           },
           credentials: "include",
-          body: JSON.stringify({ qrCode: TEST_QR_CODE }),
+          body: JSON.stringify({
+            qrCode: TEST_QR_CODE,
+            clientLocalTime: timeInfo,
+            clientTimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          }),
         }
       );
 
@@ -71,11 +100,10 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("Response data:", data);
 
       if (response.status === 401) {
-        // Clear stored data and redirect to login
         localStorage.removeItem("user");
         sessionStorage.removeItem("credentials");
         window.location.href = "login.html";
-        throw new Error("Session expired. Please log in again.");
+        throw new Error("Session expired. Please log in again");
       }
 
       if (response.ok) {
@@ -86,25 +114,49 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(data.error || "Check-in failed");
       }
     } catch (error) {
-      console.error("Check-in error:", error);
       showNotification(error.message, "error");
       scanResult.textContent = error.message;
       scanResult.className = "scan-result error";
+      console.error("Check-in error:", error);
     }
   }
 
   // Event Listeners
-  checkInBtn.addEventListener("click", testCheckIn);
+  checkInBtn.addEventListener("click", async (event) => {
+    event.preventDefault();
+    try {
+      // Verify user is logged in and has valid credentials
+      const userData = getUserData();
+      if (!userData) return;
+
+      if (!getBasicAuthHeader()) {
+        showNotification(
+          "Please log in again to refresh your credentials",
+          "error"
+        );
+        window.location.href = "login.html";
+        return;
+      }
+
+      await testCheckIn();
+    } catch (error) {
+      console.error("Check-in error:", error);
+      showNotification(error.message, "error");
+    }
+  });
+
+  logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("user");
+    sessionStorage.removeItem("credentials");
+    window.location.href = "login.html";
+  });
 
   // Initialize user data
   const userData = getUserData();
   if (userData && userData.username) {
     memberNameElement.textContent = userData.username;
+    console.log("Current user data:", userData);
   } else {
     window.location.href = "login.html";
   }
-
-  // Log stored data for debugging
-  console.log("Stored user data:", userData);
-  console.log("Stored credentials:", sessionStorage.getItem("credentials"));
 });

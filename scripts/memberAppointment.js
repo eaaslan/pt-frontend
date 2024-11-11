@@ -1,5 +1,5 @@
 // memberAppointment.js
-const apiUrl = "http://localhost:8080/appointments";
+const apiUrl = "http://localhost:8080/api/appointments";
 const checkIn = "/check-in";
 const URLParams = new URLSearchParams(window.location.search);
 const appointmentId = URLParams.get("appointmentId");
@@ -8,7 +8,13 @@ const memberId = URLParams.get("memberId");
 if (!appointmentId) {
   showError("No appointment ID provided");
 } else {
-  fetch(`${apiUrl}/${appointmentId}`)
+  fetch(`${apiUrl}/${appointmentId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Basic " + btoa("admin:admin123"),
+    },
+  })
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.statusText}`);
@@ -66,6 +72,7 @@ function handleCheckIn(memberId, checkInTime) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Basic " + btoa("admin:admin123"),
     },
     body: JSON.stringify({
       checkInTime: checkInTime,

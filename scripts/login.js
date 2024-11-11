@@ -168,6 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (data.user.role === "ROLE_ADMIN") {
           console.log("admin");
+          window.location.href = "allMember.html";
         } else if (data.user.role === "ROLE_MEMBER") {
           window.location.href = "member.html";
           console.log("member");

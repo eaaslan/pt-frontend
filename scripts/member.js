@@ -85,7 +85,9 @@ document.addEventListener("DOMContentLoaded", () => {
             Authorization: authHeader,
           },
           credentials: "include",
-          body: JSON.stringify({ qrCode: qrCodeMessage }),
+          body: JSON.stringify({
+            qrCode: qrCodeMessage,
+          }),
         }
       );
 
