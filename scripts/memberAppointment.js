@@ -1,6 +1,8 @@
 // memberAppointment.js
 const apiUrl = "http://localhost:8080/api/appointments";
+
 const checkIn = "/check-in";
+const API_URL = window.CONFIG.getApiUrl();
 const URLParams = new URLSearchParams(window.location.search);
 const appointmentId = URLParams.get("appointmentId");
 const memberId = URLParams.get("memberId");
@@ -8,7 +10,7 @@ const memberId = URLParams.get("memberId");
 if (!appointmentId) {
   showError("No appointment ID provided");
 } else {
-  fetch(`${apiUrl}/${appointmentId}`, {
+  fetch(`${API_URL}/${appointmentId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -68,7 +70,7 @@ if (!appointmentId) {
 }
 
 function handleCheckIn(memberId, checkInTime) {
-  fetch(`${apiUrl}/check-in/${memberId}`, {
+  fetch(`${API_URL}/api/appointments/check-in/${memberId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -1,5 +1,6 @@
 // printMember.js
 const apiUrl = "http://localhost:8080/api/users";
+const API_URL = window.CONFIG.getApiUrl();
 const memberList = document.querySelector(".memberList");
 
 if (memberList) {
@@ -14,7 +15,7 @@ if (memberList) {
   });
 
   // Fetch and display members
-  fetch(apiUrl, {
+  fetch(`${API_URL}/api/users`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

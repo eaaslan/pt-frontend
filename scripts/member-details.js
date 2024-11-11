@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const apiUrl = "http://localhost:8080/api/users";
+  const API_URL = window.CONFIG.getApiUrl();
+  const LOCAL_API_URL = "http://localhost:8080/api/users";
   const urlParams = new URLSearchParams(window.location.search);
   const memberId = urlParams.get("id");
 
@@ -10,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  fetch(`${apiUrl}/${memberId}`, {
+  fetch(`${API_URL}/api/users/${memberId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
