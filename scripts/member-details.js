@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const API_URL = "https://pt-backend-42d98685b856.herokuapp.com";
-  const LOCAL_API_URL = "http://localhost:8080/api/users";
+
   const urlParams = new URLSearchParams(window.location.search);
   const memberId = urlParams.get("id");
 
