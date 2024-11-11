@@ -2,7 +2,7 @@
 const apiUrl = "http://localhost:8080/api/appointments";
 
 const checkIn = "/check-in";
-const API_URL = window.CONFIG.getApiUrl();
+const API_URL = "https://pt-backend-42d98685b856.herokuapp.com";
 const URLParams = new URLSearchParams(window.location.search);
 const appointmentId = URLParams.get("appointmentId");
 const memberId = URLParams.get("memberId");

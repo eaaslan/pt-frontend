@@ -1,6 +1,6 @@
 // printMember.js
 const apiUrl = "http://localhost:8080/api/users";
-const API_URL = window.CONFIG.getApiUrl();
+const API_URL = "https://pt-backend-42d98685b856.herokuapp.com";
 const memberList = document.querySelector(".memberList");
 
 if (memberList) {

@@ -9,7 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const passwordError = document.getElementById("passwordError");
   const submitButton = form.querySelector(".submit-btn");
   const rememberMe = document.getElementById("remember");
-  const API_URL = window.CONFIG.getApiUrl();
+  //const API_URL = window.CONFIG.getApiUrl();
+  API_URL = "https://pt-backend-42d98685b856.herokuapp.com";
   // Restore saved form data
   const restoreFormData = () => {
     const savedData = localStorage.getItem("user");

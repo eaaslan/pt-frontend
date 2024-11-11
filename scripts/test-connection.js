@@ -1,6 +1,6 @@
 // test-connection.js
 async function testBackendConnection() {
-  const API_URL = window.CONFIG.getApiUrl();
+  API_URL = "https://pt-backend-42d98685b856.herokuapp.com";
   console.log("Testing connection to:", API_URL);
 
   try {
