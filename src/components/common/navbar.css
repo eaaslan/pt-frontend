@@ -1,0 +1,77 @@
+/* navbar.css */
+
+/* Base navbar container */
+.navbar-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border-top: 1px solid #e5e7eb;
+  z-index: 50;
+}
+
+/* Grid layouts for different types of navbars */
+.navbar-grid {
+  height: 4rem; /* 64px */
+}
+
+.navbar-grid-member {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.navbar-grid-admin {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* Navigation link styles */
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  color: #4b5563; /* text-gray-600 */
+  transition: color 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+  color: #2563eb; /* text-blue-600 */
+}
+
+.nav-link.active {
+  color: #2563eb; /* text-blue-600 */
+}
+
+/* Icon styles */
+.nav-icon {
+  width: 1.5rem; /* 24px */
+  height: 1.5rem; /* 24px */
+}
+
+/* Label styles */
+.nav-label {
+  font-size: 0.75rem; /* 12px */
+  line-height: 1rem;
+}
+
+/* Safe area padding for mobile devices */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .navbar-container {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .nav-icon {
+    width: 1.25rem; /* 20px */
+    height: 1.25rem; /* 20px */
+  }
+
+  .nav-label {
+    font-size: 0.675rem; /* 11px */
+  }
+}

@@ -1,0 +1,44 @@
+<!-- /src/pages/member/dashboard/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Member Dashboard</title>
+    <!-- TODO: Replace with proper Tailwind installation -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="h-screen flex flex-col bg-gray-100">
+    <main class="flex-1">
+      <div class="dashboard h-full">
+        <header class="dashboard-header">
+          <h1 class="text-xl">Hosgeldin <span id="memberName"></span></h1>
+        </header>
+
+        <!-- Package container added here, before appointments -->
+        <div class="packageContainer" id="packageContainer">
+          <h2 class="text-lg mb-2">Paketin</h2>
+          <div id="package-info"></div>
+          <div id="cancel-package-info"></div>
+        </div>
+
+        <div class="appointments-container">
+          <h2 class="text-lg mb-2">Randevularin</h2>
+          <div id="appointmentsList" class="appointments-list">
+            <!-- Appointments will be inserted here -->
+          </div>
+          <div id="error" class="error-message"></div>
+        </div>
+      </div>
+    </main>
+
+    <div id="navbarContainer"></div>
+
+    <script type="module" src="/src/components/common/Navbar.js"></script>
+    <script
+      type="module"
+      src="/src/pages/member/dashboard/dashboard.js"
+    ></script>
+  </body>
+</html>

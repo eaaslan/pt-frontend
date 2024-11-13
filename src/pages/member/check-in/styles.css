@@ -1,0 +1,50 @@
+/* Add to your dashboard.css */
+
+.checkin-container {
+  background-color: #fff;
+  padding: 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 0.75rem;
+}
+
+#reader {
+  width: 100% !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+#reader video {
+  border-radius: 8px;
+}
+
+.notification {
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+}
+
+.notification.success {
+  background-color: #4caf50;
+  color: white;
+}
+
+.notification.error {
+  background-color: #f44336;
+  color: white;
+}
+
+.scan-result {
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.scan-result.success {
+  color: #4caf50;
+}
+
+.scan-result.error {
+  color: #f44336;
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+
+    <link rel="stylesheet" href="../../admin/styles.css" />
+    <link rel="stylesheet" href="../../member/dashboard/styles.css" />
+    <link rel="stylesheet" href="../../../components/common/navbar.css" />
+  </head>
+  <body>
+    <main class="flex-1">
+      <div class="dashboard h-full">
+        <div class="dashboard-header">
+          <h1 id="adminTitle" class="text-xl">Admin Dashboard</h1>
+        </div>
+
+        <div id="membersContainer" class="members-container">
+          <h2 id="membersTitle" class="text-lg mb-2">Members</h2>
+          <div id="membersTable" class="members-table">
+            <table class="w-full">
+              <thead>
+                <tr>
+                  <th class="text-left p-2">Name</th>
+                  <th class="text-left p-2">Package</th>
+                  <th class="text-left p-2">Sessions Left</th>
+                  <th class="text-left p-2">Last Check-in</th>
+                  <th class="text-center p-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="membersList">
+                <!-- Members will be populated here -->
+              </tbody>
+            </table>
+          </div>
+
+          <div id="paginationContainer" class="pagination-container">
+            <div class="flex justify-between items-center mt-4">
+              <button id="prevPage" class="nav-button">Previous</button>
+              <span id="pageInfo" class="current-page"></span>
+              <button id="nextPage" class="nav-button">Next</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="statsContainer" class="stats-container mt-4">
+          <h2 id="statsTitle" class="text-lg mb-2">Statistics</h2>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-title">Total Members</div>
+              <div id="totalMembers" class="stat-value">-</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Active Sessions Today</div>
+              <div id="todaySessions" class="stat-value">-</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-title">Monthly Check-ins</div>
+              <div id="monthlyCheckins" class="stat-value">-</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="errorContainer" class="error-message hidden"></div>
+      </div>
+    </main>
+
+    <div id="navbarContainer"></div>
+
+    <script
+      type="module"
+      src="/src/pages/admin/dashboard/adminDashboard.js"
+    ></script>
+    <script type="module" src="/src/components/common/Navbar.js"></script>
+  </body>
+</html>

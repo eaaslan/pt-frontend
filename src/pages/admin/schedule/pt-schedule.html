@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PT Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Update the CSS import to include the new schedule styles -->
+    <link rel="stylesheet" href="/src/pages/member/dashboard/styles.css" />
+    <link rel="stylesheet" href="/src/pages/admin/styles.css" />
+  </head>
+  <body class="flex flex-col min-h-screen bg-gray-100">
+    <div class="flex-1" role="main">
+      <div class="dashboard h-full">
+        <div class="dashboard-header">
+          <h1 class="text-xl font-semibold text-gray-800">Schedule</h1>
+        </div>
+
+        <div class="schedule-container">
+          <!-- Member Select -->
+          <div
+            id="memberSelectContainer"
+            class="member-select-container hidden"
+          >
+            <select
+              id="memberSelect"
+              class="member-select"
+              aria-label="Select member"
+            >
+              <option value="">Select a member</option>
+            </select>
+          </div>
+
+          <!-- Calendar Navigation -->
+          <div class="calendar-nav">
+            <button id="prevWeek" class="nav-button" aria-label="Previous week">
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <span id="currentWeek" class="current-period"></span>
+            <button id="nextWeek" class="nav-button" aria-label="Next week">
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Schedule Grid -->
+          <div class="week-container">
+            <div id="weekDays" class="week-days"></div>
+            <div id="timeSlots" class="time-slots"></div>
+          </div>
+        </div>
+
+        <!-- Error Container -->
+        <div
+          id="errorContainer"
+          class="hidden fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-lg z-50"
+          role="alert"
+        ></div>
+
+        <!-- Success Container -->
+        <div
+          id="successContainer"
+          class="hidden fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50"
+          role="alert"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div
+      id="bookingModal"
+      class="modal hidden"
+      role="dialog"
+      aria-labelledby="modalTitle"
+    >
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalTitle" class="text-lg font-semibold">Confirm Booking</h2>
+          <button id="closeModal" class="close-button" aria-label="Close modal">
+            ×
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="bookingDetails" class="text-gray-700 mb-4"></p>
+          <div class="button-group">
+            <button id="confirmBooking" class="confirm-button">Confirm</button>
+            <button id="cancelBooking" class="cancel-button">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navbar Container -->
+    <div id="navbarContainer"></div>
+
+    <!-- Scripts -->
+    <script type="module">
+      import { PTScheduleHandler } from "/src/components/schedule/PTScheduleHandler.js";
+
+      // Remove the global window assignment as it's handled in the class
+      document.addEventListener("DOMContentLoaded", () => {
+        new PTScheduleHandler();
+      });
+    </script>
+
+    <script type="moude" src="/src/components/common/Navbar.js"></script>
+  </body>
+</html>

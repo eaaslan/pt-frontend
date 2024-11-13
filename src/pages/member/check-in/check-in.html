@@ -1,0 +1,32 @@
+<!-- /src/pages/member/checkin/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Check In</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <link rel="stylesheet" href="../dashboard/styles.css" />
+  </head>
+  <body class="h-screen flex flex-col bg-gray-100">
+    <main class="flex-1">
+      <div class="dashboard h-full">
+        <header class="dashboard-header">
+          <h1 class="text-xl">Check In</h1>
+        </header>
+
+        <div class="checkin-container">
+          <div id="reader" class="w-full mb-4"></div>
+          <div id="scanResult" class="text-center mb-4"></div>
+          <div id="notification" class="hidden"></div>
+        </div>
+      </div>
+    </main>
+
+    <div id="navbarContainer"></div>
+
+    <script type="module" src="/src/components/common/Navbar.js"></script>
+    <script type="module" src="/src/pages/member/check-in/checkin.js"></script>
+  </body>
+</html>

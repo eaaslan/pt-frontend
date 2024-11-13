@@ -1,0 +1,86 @@
+<!-- /src/pages/member/schedule/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/src/pages/member/dashboard/styles.css" />
+    <link rel="stylesheet" href="/src/pages/member/schedule/schedule.css" />
+  </head>
+  <body class="h-screen flex flex-col bg-gray-100">
+    <main class="flex-1">
+      <div class="dashboard h-full">
+        <header class="dashboard-header">
+          <h1 class="text-xl">Schedule</h1>
+        </header>
+
+        <div class="schedule-container">
+          <!-- Calendar Navigation -->
+          <div class="calendar-nav">
+            <button id="prevWeek" class="nav-button">
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <div id="currentWeek" class="current-period"></div>
+            <button id="nextWeek" class="nav-button">
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Week View -->
+          <div class="week-container">
+            <div id="weekDays" class="week-days"></div>
+            <div id="timeSlots" class="time-slots"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Confirm Booking</h2>
+          <button id="closeModal" class="close-button">×</button>
+        </div>
+        <div class="modal-body">
+          <p id="bookingDetails"></p>
+          <div class="button-group">
+            <button id="confirmBooking" class="confirm-button">Confirm</button>
+            <button id="cancelBooking" class="cancel-button">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="navbarContainer"></div>
+
+    <script type="module" src="/src/components/common/Navbar.js"></script>
+    <script type="module" src="./deprecated-schedule.js"></script>
+  </body>
+</html>
