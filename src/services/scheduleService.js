@@ -29,7 +29,6 @@ export class ScheduleService {
       }
 
       const data = await response.json();
-      console.log(data);
       return data;
     } catch (error) {
       console.error("Error fetching appointments:", error);
@@ -37,47 +36,18 @@ export class ScheduleService {
     }
   }
 
-  async fetchAvailableSlots() {
+//todo it should send member's pt request
+  async bookAppointment(appointmentTime) {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/api/appointments/available`,
-        {
-          headers: {
-            Authorization: this.getAuthHeader(),
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch available slots: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching available slots:", error);
-      throw error;
-    }
-  }
-
-  async bookAppointment(appointmentTime, memberId = null) {
-    try {
-      const body = {
-        appointmentTime: new Date(appointmentTime).toISOString(),
-      };
-
-      if (memberId) {
-        body.memberId = memberId;
-      }
-
-      const response = await fetch(`${this.baseUrl}/api/appointments`, {
+      const response = await fetch(`${this.baseUrl}/api/appointments/book`, {
         method: "POST",
         headers: {
           Authorization: this.getAuthHeader(),
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          appointmentTime: new Date(appointmentTime).toISOString()
+        }),
       });
 
       if (!response.ok) {
@@ -91,6 +61,7 @@ export class ScheduleService {
       throw error;
     }
   }
+
 
   async cancelAppointment(appointmentId) {
     try {
